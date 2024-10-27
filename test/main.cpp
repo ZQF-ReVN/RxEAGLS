@@ -6,7 +6,7 @@
 #include <Zut/ZxFile.h>
 #include <ReVN/RxEAGLS/Core/Script_Dat.h>
 #include <ReVN/RxEAGLS/Core/CodeText_Textor.h>
-#include <ReVN/RxEAGLS/Core/CodeText_Formater.h>
+#include <ReVN/RxEAGLS/Core/CodeText_Formatter.h>
 
 
 namespace RxEAGLS
@@ -20,12 +20,12 @@ namespace RxEAGLS
     ZxFS::DirMakeRecursive(msFormatedDir);
 
     ZxMem code_text_mem;
-    RxEAGLS::CodeText::Formater formater;
-    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile(); formater.Clear())
+    RxEAGLS::CodeText::Formatter formatter;
+    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile(); formatter.Clear())
     {
         code_text_mem.Load(walker.GetPath());
         const auto code_text{ std::string_view{ code_text_mem.Ptr<const char*>(), code_text_mem.SizeBytes() } };
-        const auto formated{ formater.Format(code_text) };
+        const auto formated{ formatter.Format(code_text) };
         const auto save_path{ std::string{ msFormatedDir }.append(walker.GetName()) };
         ZxFile::SaveDataViaPath(save_path, std::span{ formated }, true, true);
     }

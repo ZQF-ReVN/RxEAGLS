@@ -13,7 +13,7 @@ endif()
 list(APPEND ReVN_RxEAGLS_Core_Src_Files
     "src/ReVN/RxEAGLS/Core/Script_Dat.cpp"
     "src/ReVN/RxEAGLS/Core/CodeText_Lexical.cpp"
-    "src/ReVN/RxEAGLS/Core/CodeText_Formater.cpp"
+    "src/ReVN/RxEAGLS/Core/CodeText_Formatter.cpp"
     "src/ReVN/RxEAGLS/Core/CodeText_Textor.cpp")
 
 # Set Library

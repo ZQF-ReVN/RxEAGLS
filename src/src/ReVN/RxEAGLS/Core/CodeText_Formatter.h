@@ -4,10 +4,10 @@
 
 namespace ZQF::ReVN::RxEAGLS::CodeText
 {
-    class Formater
+    class Formatter
     {
     public:
-        class FormatedBuf
+        class FormattedBuf
         {
         private:
             std::string m_msBuf;
@@ -23,10 +23,10 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
         };
 
     private:
-        FormatedBuf m_FormatedBuf;
+        FormattedBuf m_FormattedBuf;
 
     public:
-        Formater() {};
+        Formatter() {};
 
     public:
         auto Format(const std::string_view msCodeTextPath) -> std::string_view;
