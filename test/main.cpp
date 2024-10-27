@@ -1,11 +1,12 @@
 #include <print>
 #include <iostream>
 #include <Zut/ZxFS.h>
+#include <Zut/ZxMem.h>
 #include <Zut/ZxCvt.h>
 #include <Zut/ZxFile.h>
-#include <ReVN/RxEAGLS/Core/Script_Binary.h>
+#include <ReVN/RxEAGLS/Core/Script_Dat.h>
+#include <ReVN/RxEAGLS/Core/CodeText_Textor.h>
 #include <ReVN/RxEAGLS/Core/CodeText_Formater.h>
-#include <ReVN/RxEAGLS/Core/CodeText_TextEditor.h>
 
 
 namespace RxEAGLS
@@ -16,42 +17,51 @@ namespace RxEAGLS
 
 [[maybe_unused]] static auto FormatCodeText(const std::string_view msCodeTextDir, const std::string_view msFormatedDir) -> void
 {
-    ZxFS::DirMake(msFormatedDir, false);
+    ZxFS::DirMakeRecursive(msFormatedDir);
 
+    ZxMem code_text_mem;
     RxEAGLS::CodeText::Formater formater;
-    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile();)
+    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile(); formater.Clear())
     {
-        formater.FromPath(walker.GetPath());
-        formater.SaveFormated(std::string{ msFormatedDir }.append(walker.GetName()));
+        code_text_mem.Load(walker.GetPath());
+        const auto code_text{ std::string_view{ code_text_mem.Ptr<const char*>(), code_text_mem.SizeBytes() } };
+        const auto formated{ formater.Format(code_text) };
+        const auto save_path{ std::string{ msFormatedDir }.append(walker.GetName()) };
+        ZxFile::SaveDataViaPath(save_path, std::span{ formated }, true, true);
     }
 }
 
 [[maybe_unused]] static auto ExportCodeText(const std::string_view msScriptDir, const std::string_view msCodeTextDir) -> void
 {
-    ZxFS::DirMake(msCodeTextDir, false);
+    ZxFS::DirMakeRecursive(msCodeTextDir);
 
     ZxCvt cvt;
-    RxEAGLS::Script::Binary parser;
-    for (ZxFS::Walker walker{ msScriptDir }; walker.NextFile(); parser.Clear())
+    RxEAGLS::Script::Dat dat;
+    for (ZxFS::Walker walker{ msScriptDir }; walker.NextFile(); dat.Clear())
     {
-        const auto code_text{ cvt.MBCSToUTF8(parser.Load(walker.GetPath()).GetCodeText(), 932) };
-        const auto save_path{ std::string{ msCodeTextDir }.append(walker.GetName()).append(".txt") };
+        dat.Load(walker.GetPath());
+        const auto code_text{ cvt.MBCSToUTF8(dat.GetCodeText(), 932) };
+        const auto save_path{ std::string{ msCodeTextDir }.append(walker.GetNameStem()).append(".txt") };
         ZxFile{ save_path, ZxFile::OpenMod::WriteForce }.Write(std::span{ code_text });
     }
 }
 
 [[maybe_unused]] static auto ExportJsonText(const std::string_view msCodeTextDir, const std::string_view msJsonDir) -> void
 {
-    ZxFS::DirMake(msJsonDir, false);
+    ZxFS::DirMakeRecursive(msJsonDir);
 
-    RxEAGLS::CodeText::TextEditor text_editor;
+    ZxMem code_text_mem;
+    RxEAGLS::CodeText::Textor textor;
 
-    text_editor.SetNameMap(":NameSuffix", "和也");
+    textor.SetNameMap(":NameSuffix", "和也");
 
-    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile(); text_editor.Clear())
+    for (ZxFS::Walker walker{ msCodeTextDir }; walker.NextFile(); textor.Clear())
     {
-        text_editor.ScanViaPath(walker.GetPath());
-        text_editor.ExportViaJson(std::string{ msJsonDir }.append(walker.GetName()).append(".json"));
+        code_text_mem.Load(walker.GetPath());
+        const auto code_text{ std::string_view{ code_text_mem.Ptr<const char*>(), code_text_mem.SizeBytes() } };
+        textor.Scan(code_text);
+        const auto save_path{ std::string{ msJsonDir }.append(walker.GetNameStem()).append(".json") };
+        textor.Export(save_path);
     }
 }
 
@@ -60,9 +70,9 @@ auto main() -> int
 {
     try
     {
-        ::ExportCodeText("script/", "code_text/");
-        ::FormatCodeText("code_text/", "formated/");
-        ::ExportJsonText("formated/", "json/");
+        ::ExportCodeText("script/", "script_text/code_text/");
+        ::FormatCodeText("script_text/code_text/", "script_text/code_text_formated/");
+        ::ExportJsonText("script_text/code_text_formated/", "script_text/json/");
     }
     catch (const std::exception& err)
     {

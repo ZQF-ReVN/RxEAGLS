@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <Zut/ZxMem.h>
-
 
 
 namespace ZQF::ReVN::RxEAGLS::CodeText
@@ -21,16 +19,21 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
             auto Clear() -> void;
             auto IncScope() -> void;
             auto SubScope() -> void;
-            auto GetSpan() const->std::span<const char>;
+            auto GetStr() const -> std::string_view;
         };
 
     private:
-        ZxMem m_CodeTextMem;
         FormatedBuf m_FormatedBuf;
 
     public:
-        auto FromPath(const std::string_view msCodeTextPath) -> void;
-        auto SaveFormated(const std::string_view msSavePath) -> void;
+        Formater() {};
+
+    public:
+        auto Format(const std::string_view msCodeTextPath) -> std::string_view;
+
+    public:
+        auto Clear() -> void;
+        auto GetFormatedStr() const -> std::string_view;
     };
 
 }

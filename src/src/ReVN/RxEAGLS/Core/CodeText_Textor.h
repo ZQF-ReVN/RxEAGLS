@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
+#include <string>
+#include <string_view>
 #include <unordered_map>
-#include <Zut/ZxMem.h>
 
 
 namespace ZQF::ReVN::RxEAGLS::CodeText
 {
-    class TextEditor
+    class Textor
     {
     private:
         struct msg_info_t
@@ -24,15 +25,14 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
         };
 
     private:
-        ZxMem m_CodeTextMem;
         std::vector<msg_info_t> m_MsgVec;
         std::unordered_map<std::string, std::string> m_NameMap;
 
     public:
-        auto ScanViaPath(const std::string_view msCodeTextPath) -> void;
+        auto Scan(const std::string_view msCodeText) -> void;
 
     public:
-        auto ExportViaJson(const std::string_view msSavePath) -> void;
+        auto Export(const std::string_view msSavePath) -> void;
 
     public:
         auto Clear() -> void;

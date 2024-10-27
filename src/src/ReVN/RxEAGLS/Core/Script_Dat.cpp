@@ -1,10 +1,10 @@
-#include "Script_Binary.h"
+#include "Script_Dat.h"
 #include <Zut/ZxMem.h>
 
 
 namespace ZQF::ReVN::RxEAGLS::Script
 {
-    auto Binary::Load(const std::string_view msPath) -> Binary&
+    auto Dat::Load(const std::string_view msPath) -> Dat&
     {
         ZxMem script_mem{ msPath };
 
@@ -24,12 +24,12 @@ namespace ZQF::ReVN::RxEAGLS::Script
         return *this;
     }
 
-    auto Binary::GetCodeText() -> std::string_view
+    auto Dat::GetCodeText() -> std::string_view
     {
         return m_msCodeText;
     }
 
-    auto Binary::Clear() -> void
+    auto Dat::Clear() -> void
     {
         m_aLableTable = {};
         m_msCodeText.clear();

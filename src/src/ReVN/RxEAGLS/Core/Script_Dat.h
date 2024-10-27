@@ -7,7 +7,7 @@
 
 namespace ZQF::ReVN::RxEAGLS::Script
 {
-    class Binary
+    class Dat
     {
     private:
         std::array<Struct::Script::Lable, 100> m_aLableTable{};
@@ -15,7 +15,7 @@ namespace ZQF::ReVN::RxEAGLS::Script
         std::uint8_t m_ucSeed{};
 
     public:
-        auto Load(const std::string_view msPath) -> Binary&;
+        auto Load(const std::string_view msPath) -> Dat&;
 
     public:
         auto Clear() -> void;

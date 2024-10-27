@@ -1,21 +1,19 @@
-#include "CodeText_TextEditor.h"
+#include "CodeText_Textor.h"
 #include "CodeText_Lexical.h"
 #include <Zut/ZxJson.h>
 
 
 namespace ZQF::ReVN::RxEAGLS::CodeText
 {
-    auto TextEditor::SetNameMap(const std::string_view msKey, const std::string_view msName) -> bool
+    auto Textor::SetNameMap(const std::string_view msKey, const std::string_view msName) -> bool
     {
         const auto [ite, status] = m_NameMap.try_emplace(std::string{ msKey }, std::string{ msName });
         return status;
     }
 
-    auto TextEditor::ScanViaPath(const std::string_view msCodeTextPath) -> void
+    auto Textor::Scan(const std::string_view msCodeText) -> void
     {
-        m_CodeTextMem.Load(msCodeTextPath);
-
-        for (CodeText::Lexical lexical{ std::string_view{ m_CodeTextMem.Ptr<const char*>(), m_CodeTextMem.SizeBytes() } }; lexical.ParseNext();)
+        for (CodeText::Lexical lexical{ msCodeText }; lexical.ParseNext();)
         {
             switch (lexical.GetCurTokenType())
             {
@@ -85,7 +83,7 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
         }
     }
 
-    auto TextEditor::ExportViaJson(const std::string_view msSavePath) -> void
+    auto Textor::Export(const std::string_view msSavePath) -> void
     {
         if (m_MsgVec.empty()) { return; }
 
@@ -161,11 +159,10 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
             }
         }
 
-
         ZxJson::StoreViaFile(msSavePath, msg_info_json, true, true);
     }
 
-    auto TextEditor::Clear() -> void
+    auto Textor::Clear() -> void
     {
         m_MsgVec.clear();
     }

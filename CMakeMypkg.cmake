@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(ZxCvt)
 FetchContent_Declare(
   ZxFS
   GIT_REPOSITORY https://github.com/ZQF-Zut/ZxFS.git
-  GIT_TAG f7c3d1082b050d203246ca259ea07893c5033494)
+  GIT_TAG 6bb36bfc28c3cf2bc8ad61a8786b1031c6ffb488)
 
 FetchContent_MakeAvailable(ZxFS)
 

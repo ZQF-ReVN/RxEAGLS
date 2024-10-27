@@ -1,6 +1,5 @@
 #include "CodeText_Formater.h"
 #include "CodeText_Lexical.h"
-#include <Zut/ZxFile.h>
 
 
 namespace ZQF::ReVN::RxEAGLS::CodeText
@@ -33,17 +32,15 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
         m_nScopeLevel--;
     }
 
-    auto Formater::FormatedBuf::GetSpan() const -> std::span<const char>
+    auto Formater::FormatedBuf::GetStr() const -> std::string_view
     {
-        return std::span{ m_msBuf.data(), m_msBuf.size() };
+        return m_msBuf;
     }
 
 
-    auto Formater::FromPath(const std::string_view msCodeTextPath) -> void
+    auto Formater::Format(const std::string_view msCodeText) -> std::string_view
     {
-        m_CodeTextMem.Load(msCodeTextPath);
-
-        for (CodeText::Lexical lexical{ std::string_view{ m_CodeTextMem.Ptr<const char*>(), m_CodeTextMem.SizeBytes() } }; lexical.ParseNext();)
+        for (CodeText::Lexical lexical{ msCodeText }; lexical.ParseNext();)
         {
             if (lexical.GetCurTokenType() == CodeText::TokenType::BlockBeg)
             {
@@ -63,10 +60,17 @@ namespace ZQF::ReVN::RxEAGLS::CodeText
                 m_FormatedBuf.PushContainln(lexical.GetCurContain());
             }
         }
+
+        return this->GetFormatedStr();
     }
 
-    auto Formater::SaveFormated(const std::string_view msSavePath) -> void
+    auto Formater::Clear() -> void
     {
-        ZxFile::SaveDataViaPath(msSavePath, m_FormatedBuf.GetSpan(), true, true);
+        m_FormatedBuf.Clear();
+    }
+
+    auto Formater::GetFormatedStr() const -> std::string_view
+    {
+        return m_FormatedBuf.GetStr();
     }
 }
